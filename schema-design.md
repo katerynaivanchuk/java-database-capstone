@@ -21,7 +21,8 @@ CREATE TABLE patients (
     date_of_birth DATE NOT NULL,
     gender VARCHAR(20) NOT NULL,
     address VARCHAR(100) NOT NULL,                    -- Required for invoicing and contact
-    insurance_number VARCHAR(100) NOT NULL,           -- Required for medical coverage processing
+    insurance_number VARCHAR(100) NOT NULL,         -- Required for medical coverage processing
+    is_active BOOLEAN DEFAULT TRUE,                   -- Account status controlled by clinic admins
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -125,3 +126,20 @@ Sample JSON Document
 - Embedded Data Model: Using an embedded array (medications) eliminates the need for separate drug-to-prescription join tables, keeping all treatment information in a single atomic record.
 
 - Document Immutability: Storing basic patient and doctor snapshots inside the prescription preserves historical data integrity even if the primary patient address or doctor status changes in the relational database later.
+
+- Data Retention & Account Deactivation Policy: 
+Patients cannot hard-delete their profiles. Medical compliance requires retaining clinical records, so accounts can only be deactivated (`is_active = FALSE`) by administrators to block login access while preserving medical history.
+
+## Architectural Insights & Edge Cases
+* **Doctor Availability:** Doctors define custom available working time slots. Appointment bookings are constrained strictly to these open slots.
+* **Medical Data Retention:** Patient appointment history is retained indefinitely (or for the legally mandated period of 20+ years) to ensure full medical continuity. Data is archived rather than deleted.
+* **Standalone Prescriptions:** While prescriptions are typically issued during an appointment, the MongoDB schema allows `appointmentId` to be optional (`null`), supporting repeat prescription requests filled outside of standard consultations.
+* **Patient Data Embedding vs Reference:**
+Instead of embedding the complete patient profile or referencing only the ID, the `prescriptions` document uses the **Subset Pattern**. It embeds `patientId`, `name`, and `address`. This provides fast reads for prescription display without fetching heavy relational data from MySQL.
+* **Future Expansion: Chat Messages Document Model:**
+To support real-time communication between patients and doctors, a new MongoDB collection (`chat_messages`) can be easily integrated:
+   - Embeds sender and recipient details.
+   - Includes message body, reading status, timestamp, and optional media attachments array.
+* **Schema Evolution Strategy:**
+   - **MongoDB:** Naturally supports schema updates without downtime. New fields (e.g., digital signatures, QR codes) can be added to new documents while maintaining backward          compatibility with older documents.
+   - **MySQL:** Database schema changes will be managed using migration tools like Flyway/Liquibase to handle safe `ALTER TABLE` scripts.
