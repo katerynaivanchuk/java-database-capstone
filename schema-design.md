@@ -39,6 +39,7 @@ CREATE TABLE doctors (
     email VARCHAR(100) UNIQUE NOT NULL,               -- Unique email for login
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'ROLE_DOCTOR',
+    gender VARCHAR(20) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
     specialization VARCHAR(50) NOT NULL,             -- Medical specialization profile
     license_number VARCHAR(50) UNIQUE NOT NULL,       -- Unique legal medical identification
