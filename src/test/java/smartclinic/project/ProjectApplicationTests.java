@@ -1,4 +1,4 @@
-package smart_clinic.project;
+package smartclinic.project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

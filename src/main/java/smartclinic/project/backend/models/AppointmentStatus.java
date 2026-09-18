@@ -1,0 +1,10 @@
+package smartclinic.project.backend.models;
+
+public enum AppointmentStatus {
+    SCHEDULED,
+    CONFIRMED,
+    IN_PROGRESS,
+    COMPLETED,
+    CANCELLED,
+    NO_SHOW;
+}
