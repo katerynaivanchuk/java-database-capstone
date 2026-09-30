@@ -1,0 +1,166 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+/* Layout */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Search and Filter Styling */
+#searchBar,
+#appointmentDateFilter {
+    padding: 10px 15px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#searchBar {
+    width: 100%;
+    max-width: 500px;
+}
+
+#searchBar:focus,
+#appointmentDateFilter:focus {
+    border-color: #015c5d;
+    box-shadow: 0 0 5px rgba(1, 92, 93, 0.4);
+}
+
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.filter-section .button,
+#todayAppointmentsBtn {
+    background-color: #015c5d;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-section .button:hover,
+#todayAppointmentsBtn:hover {
+    background-color: #017d7e;
+}
+
+/* Table Styling */
+#patientTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#patientTable thead {
+    background-color: rgba(1, 92, 93, 0.9);
+    color: #ffffff;
+}
+
+#patientTable th,
+#patientTable td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#patientTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#patientTable tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+#patientTable tbody tr:hover {
+    background-color: #f1f7f7;
+}
+
+/* Extras */
+.prescription-btn {
+    background-color: #015c5d;
+    color: #ffffff;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.prescription-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+}
+
+.noPatientRecord {
+    font-style: italic;
+    color: #888888;
+    text-align: center;
+    padding: 20px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #searchBar {
+        max-width: 100%;
+    }
+
+    #patientTable {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    #patientTable th,
+    #patientTable td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}

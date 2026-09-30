@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Clinic System</title>
+        <link rel="icon" href="https://fav.farm/🏥"
+        <link rel="stylesheet" href="./assets/css/index.css">
+        <link rel="stylesheet" href="./assets/css/style.css">
+        <script src="./js/util.js" defer></script>
+        <script src="./js/render.js" defer></script>
+        <script src="./js/components/header.js" defer></script>
+        <script src="./js/components/footer.js" defer></script>
+
+    </head>
+    <body>
+        <main class="main-content">
+            <div class="container">
+                <div class="wrapper"></div>
+
+                <div id="header"></div>
+
+                <h2>Select Your Role</h2>
+
+                <button id="role-admin" onclick="selectRole('admin')">Admin</button>
+        <button id="role-doctor" onclick="selectRole('doctor')">Doctor</button>
+        <button id="role-patient" onclick="selectRole('patient')">Patient</button>
+
+                <div id="footer"></div>
+            </div>
+        </main>
+
+       
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <button id="closeModal" class="close-btn">&times;</button>
+                <div id="modal-body">
+                
+            </div>
+            </div>
+        </div>
+
+        <script type="module" src="../js/services/index.js" defer></script>
+    </body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoctorDashboard</title>
+
+    <!-- Favicon link -->
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/doctorDashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+
+    <!-- Utility JavaScript Files -->
+    <script th:src="@{/js/render.js}" defer></script>
+    <script th:src="@{/js/util.js}" defer></script>
+
+    <!-- Components JavaScript Files -->
+    <script th:src="@{/js/components/header.js}" defer></script>
+    <script th:src="@{/js/components/footer.js}" defer></script>
+    <script th:src="@{/js/components/patientRows.js}" defer></script>
+
+    <!-- Services and Main Logic JavaScript Files -->
+    <script type="module" th:src="@{/js/services/patientServices.js}" defer></script>
+    <script type="module" th:src="@{/js/services/doctorDashboard.js}" defer></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="wrapper">
+
+            <!-- Dynamic Header placeholder -->
+            <div id="header"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+
+                <!-- Search Bar -->
+                <input type="text" id="searchBar" placeholder="Search patients..." />
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <button id="todayAppointmentsBtn" class="button">Today's Appointments</button>
+                    <input type="date" id="appointmentDateFilter" />
+                </div>
+
+                <!-- Patient Records Table -->
+                <table id="patientTable">
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Prescription</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+                        <!-- Table body is populated dynamically via patientRows.js -->
+                    </tbody>
+                </table>
+
+            </main>
+
+            <!-- Dynamic Footer placeholder -->
+            <div id="footer"></div>
+
+        </div>
+    </div>
+
+</body>
+</html>
