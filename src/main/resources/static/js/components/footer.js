@@ -36,3 +36,12 @@ function renderFooter() {
 
 // Автоматичний виклик при завантаженні скрипта
 renderFooter();
+
+// Гарантовано закриваємо модальне вікно при відкритті головної сторінки
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("modal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+    }
+  });

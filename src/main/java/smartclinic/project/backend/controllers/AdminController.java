@@ -15,6 +15,9 @@ public class AdminController {
     @Autowired
     private MainService service;
 
+
+
+    
     /**
      * Обробляє запит на вхід адміністратора.
      * 

@@ -2,20 +2,24 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Clinic System</title>
 
-    <!-- CSS links for page-specific and global styles -->
+    <!-- Favicon link -->
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}" />
 
-    <!-- JavaScript files with defer -->
-    <!-- Utility and rendering logic -->
+    <!-- Utility & Component JavaScript Files -->
     <script th:src="@{/js/render.js}" defer></script>
     <script th:src="@{/js/util.js}" defer></script>
-
-    <!-- Layout components -->
     <script th:src="@{/js/components/header.js}" defer></script>
     <script th:src="@{/js/components/footer.js}" defer></script>
+
+    <!-- Services and Main Logic -->
+    <script type="module" th:src="@{/js/services/adminDashboard.js}" defer></script>
 </head>
 <body>
 
@@ -27,29 +31,27 @@
 
             <!-- Main Content Area -->
             <main class="main-content">
-                
-                <!-- Search Bar -->
-                <input type="text" id="searchBar" placeholder="search by doctor name" />
+                <h2>Admin Dashboard</h2>
 
-                <!-- Filter Section -->
-                <div class="filter-section">
-                    <select id="sortByTime">
-                        <option value="">Sort by time</option>
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
-
-                    <select id="filterBySpecialty">
-                        <option value="">Filter by specialty</option>
-                        <option value="cardiology">Cardiology</option>
-                        <option value="neurology">Neurology</option>
-                        <option value="pediatrics">Pediatrics</option>
-                    </select>
+                <!-- Control Panel / Actions -->
+                <div class="admin-actions">
+                    <button id="addDocBtn" class="dashboard-btn">Add Doctor</button>
                 </div>
 
-                <!-- Dynamic Content Area -->
-                <div id="content"></div>
-
+                <!-- Doctors / Management Table -->
+                <table id="adminTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email / Specialty</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <!-- Динамічно заповнюється скриптами -->
+                    </tbody>
+                </table>
             </main>
 
             <!-- Dynamic Footer placeholder -->
@@ -58,15 +60,13 @@
         </div>
     </div>
 
-    <!-- Modal for Adding Doctor -->
-    <div id="modal" class="modal">
-        <span id="closeModal" class="close">&times;</span>
-        <div id="modal-body"></div>
+    <!-- Reusable Modal Markup -->
+    <div id="modal" class="modal hidden" style="display: none !important;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="modal-body"></div>
+        </div>
     </div>
-
-    <!-- Service JavaScript Files -->
-    <script type="module" src="../js/services/adminDashboard.js" defer></script>
-    <script type="module" src="../js/components/doctorCard.js" defer></script>
 
 </body>
 </html>

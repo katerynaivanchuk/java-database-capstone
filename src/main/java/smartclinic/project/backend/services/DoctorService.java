@@ -202,24 +202,69 @@ public class DoctorService {
     }
 
     /**
-     * Приватний допоміжний метод для фільтрації списку лікарів за доступними годинами (AM / PM).
+     * Приватний допоміжний метод для фільтрації списку лікарів за часом 
+     * (підтримує діапазони типу "09:00:00-10:00:00", точний час "09:00:00" або "AM"/"PM").
      */
-    private List<Doctor> filterDoctorByTime(List<Doctor> doctors, String amOrPm) {
-        if (amOrPm == null || amOrPm.trim().isEmpty()) {
+    private List<Doctor> filterDoctorByTime(List<Doctor> doctors, String timeFilter) {
+        if (timeFilter == null || timeFilter.trim().isEmpty() || "-".equals(timeFilter) || "null".equalsIgnoreCase(timeFilter)) {
             return doctors;
         }
+
+        // Захист для підтримки старих значень AM/PM
+        if ("AM".equalsIgnoreCase(timeFilter) || "PM".equalsIgnoreCase(timeFilter)) {
+            return doctors.stream().filter(doctor -> {
+                if (doctor.getAvailableTimes() != null) {
+                    return doctor.getAvailableTimes().stream().anyMatch(availability -> {
+                        try {
+                            int startHour = availability.getStartTime().getHour();
+                            int endHour = availability.getEndTime().getHour();
+                            if ("AM".equalsIgnoreCase(timeFilter)) {
+                                return startHour < 12;
+                            } else {
+                                return endHour >= 12;
+                            }
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    });
+                }
+                return false;
+            }).collect(Collectors.toList());
+        }
+
+        // Парсинг переданого часу або діапазону
+        LocalTime targetStart = null;
+        LocalTime targetEnd = null;
+
+        try {
+            if (timeFilter.contains("-")) {
+                String[] parts = timeFilter.split("-");
+                targetStart = LocalTime.parse(parts[0].trim());
+                targetEnd = parts.length > 1 ? LocalTime.parse(parts[1].trim()) : null;
+            } else {
+                targetStart = LocalTime.parse(timeFilter.trim());
+            }
+        } catch (Exception e) {
+            // Якщо формат не вдалося розібрати, повертаємо невідфільтрований список
+            return doctors;
+        }
+
+        final LocalTime finalStart = targetStart;
+        final LocalTime finalEnd = targetEnd;
 
         return doctors.stream().filter(doctor -> {
             if (doctor.getAvailableTimes() != null) {
                 return doctor.getAvailableTimes().stream().anyMatch(availability -> {
                     try {
-                        int startHour = availability.getStartTime().getHour();
-                        int endHour = availability.getEndTime().getHour();
+                        LocalTime slotStart = availability.getStartTime();
+                        LocalTime slotEnd = availability.getEndTime();
 
-                        if ("AM".equalsIgnoreCase(amOrPm)) {
-                            return startHour < 12;
-                        } else if ("PM".equalsIgnoreCase(amOrPm)) {
-                            return endHour >= 12;
+                        if (finalEnd != null) {
+                            // Порівнюємо діапазон (початок і кінець слота)
+                            return slotStart.equals(finalStart) && slotEnd.equals(finalEnd);
+                        } else if (finalStart != null) {
+                            // Порівнюємо точний час із початком або кінцем слота
+                            return slotStart.equals(finalStart) || slotEnd.equals(finalStart);
                         }
                     } catch (Exception e) {
                         return false;

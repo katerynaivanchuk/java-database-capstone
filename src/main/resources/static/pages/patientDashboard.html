@@ -5,39 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard</title>
 
-    <!-- Favicon for branding -->
     <link rel="icon" href="../favicon.ico" type="image/x-icon" />
 
-    <!-- Links to CSS files -->
     <link rel="stylesheet" href="../assets/css/adminDashboard.css" />
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link rel="stylesheet" href="../assets/css/patientDashboard.css" />
 
-    <!-- JS utility and component scripts with defer -->
     <script src="../js/render.js" defer></script>
     <script src="../js/util.js" defer></script>
     <script src="../js/components/header.js" defer></script>
     <script src="../js/components/footer.js" defer></script>
     <script type="module" src="../js/components/modals.js"></script>
-
-    <!-- JS module to handle patient-specific rendering -->
     <script type="module" src="../js/patientDashboard.js" defer></script>
 </head>
-<body onload="renderContent()">
+<body>
 
     <div class="container">
         <div class="wrapper">
 
-            <!-- Dynamic Header placeholder -->
             <div id="header"></div>
 
-            <!-- Main Content Area -->
             <main class="main-content">
-
-                <!-- Search Bar -->
                 <input type="text" id="searchBar" class="searchBar" placeholder="Search Bar for custom output" />
 
-                <!-- Filter Section -->
                 <div class="filter-wrapper">
                     <select class="filter-select" id="filterTime">
                         <option value="">All Times</option>
@@ -55,19 +45,15 @@
                     </select>
                 </div>
 
-                <!-- Content container for dynamically rendered doctor cards -->
                 <div id="content"></div>
-
             </main>
 
-            <!-- Dynamic Footer placeholder -->
             <div id="footer"></div>
 
         </div>
     </div>
 
-    <!-- Reusable Modal Markup -->
-    <div id="modal" class="modal">
+    <div id="modal" class="modal hidden" style="display: none !important;">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
             <div id="modal-body"></div>

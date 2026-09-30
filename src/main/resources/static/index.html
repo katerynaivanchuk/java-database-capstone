@@ -3,14 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <title>Clinic System</title>
-        <link rel="icon" href="https://fav.farm/🏥"
-        <link rel="stylesheet" href="./assets/css/index.css">
-        <link rel="stylesheet" href="./assets/css/style.css">
-        <script src="./js/util.js" defer></script>
-        <script src="./js/render.js" defer></script>
-        <script src="./js/components/header.js" defer></script>
-        <script src="./js/components/footer.js" defer></script>
-
+        <link rel="icon" href="https://fav.farm/🏥">
+        <link rel="stylesheet" href="assets/css/index.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <script src="js/util.js" defer></script>
+        <script src="js/render.js" defer></script>
+        <script src="js/components/header.js" defer></script>
+        <script src="js/components/footer.js" defer></script>
     </head>
     <body>
         <main class="main-content">
@@ -21,24 +20,52 @@
 
                 <h2>Select Your Role</h2>
 
-                <button id="role-admin" onclick="selectRole('admin')">Admin</button>
-        <button id="role-doctor" onclick="selectRole('doctor')">Doctor</button>
-        <button id="role-patient" onclick="selectRole('patient')">Patient</button>
+                <!-- Кнопки без застарілих onclick -->
+                <button id="role-admin">Admin</button>
+                <button id="role-doctor">Doctor</button>
+                <button id="role-patient">Patient</button>
 
                 <div id="footer"></div>
             </div>
         </main>
-
        
         <div id="modal" class="modal hidden">
             <div class="modal-content">
                 <button id="closeModal" class="close-btn">&times;</button>
-                <div id="modal-body">
-                
-            </div>
+                <div id="modal-body"></div>
             </div>
         </div>
 
-        <script type="module" src="../js/services/index.js" defer></script>
+        <script type="module" src="js/services/index.js" defer></script>
+        
+        <!-- Логіка перенаправлення для кнопок вибору ролі -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const adminBtn = document.getElementById("role-admin");
+                const doctorBtn = document.getElementById("role-doctor");
+                const patientBtn = document.getElementById("role-patient");
+
+                if (adminBtn) {
+                    adminBtn.addEventListener("click", () => {
+                        localStorage.setItem("userRole", "admin");
+                        window.location.href = "templates/admin/adminDashboard.html";
+                    });
+                }
+
+                if (doctorBtn) {
+                    doctorBtn.addEventListener("click", () => {
+                        localStorage.setItem("userRole", "doctor");
+                        window.location.href = "templates/doctor/doctorDashboard.html";
+                    });
+                }
+
+                if (patientBtn) {
+                    patientBtn.addEventListener("click", () => {
+                        localStorage.setItem("userRole", "patient");
+                        window.location.href = "pages/patientDashboard.html";
+                    });
+                }
+            });
+        </script>
     </body>
 </html>
