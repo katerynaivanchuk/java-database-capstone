@@ -53,7 +53,7 @@ public class PatientService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        List<Appointment> appointments = appointmentRepository.findByPatientId(id);
+        List<Appointment> appointments = appointmentRepository.findByPatient_Id(id);
         List<AppointmentDTO> appointmentDTOs = appointments.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -69,7 +69,7 @@ public class PatientService {
         Map<String, Object> response = new HashMap<>();
         int status = "past".equalsIgnoreCase(condition) ? 1 : 0;
 
-        List<Appointment> appointments = appointmentRepository.findByPatientIdAndStatus(id, status);
+        List<Appointment> appointments = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentDateAsc(id, status);
         List<AppointmentDTO> dtos = appointments.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -83,7 +83,7 @@ public class PatientService {
      */
     public ResponseEntity<Map<String, Object>> filterByDoctor(String name, Long patientId) {
         Map<String, Object> response = new HashMap<>();
-        List<Appointment> appointments = appointmentRepository.findByPatientIdAndDoctorNameContainingIgnoreCase(patientId, name);
+        List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientId(name, patientId);
         List<AppointmentDTO> dtos = appointments.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -100,7 +100,7 @@ public class PatientService {
         int status = "past".equalsIgnoreCase(condition) ? 1 : 0;
 
         List<Appointment> appointments = appointmentRepository
-                .findByPatientIdAndDoctorNameContainingIgnoreCaseAndStatus(patientId, name, status);
+                .filterByDoctorNameAndPatientIdAndStatus(name, patientId, status);
         List<AppointmentDTO> dtos = appointments.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -133,8 +133,7 @@ public class PatientService {
         AppointmentDTO dto = new AppointmentDTO();
         dto.setId(appointment.getId());
         dto.setDoctorName(appointment.getDoctor() != null ? appointment.getDoctor().getName() : null);
-        dto.setDoctorSpecialty(appointment.getDoctor() != null ? appointment.getDoctor().getSpecialty() : null);
-        dto.setAppointmentTime(appointment.getAppointmentTime());
+        dto.setAppointmentTime(appointment.getAppointmentDate());
         dto.setStatus(appointment.getStatus());
         return dto;
     }

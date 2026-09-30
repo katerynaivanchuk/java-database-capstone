@@ -32,7 +32,7 @@ public class MainService {
     private final PatientService patientService;
 
     @Autowired
-    public Service(
+    public MainService(
             TokenService tokenService,
             AdminRepository adminRepository,
             DoctorRepository doctorRepository,
@@ -129,8 +129,8 @@ public class MainService {
             return -1; // Лікаря не знайдено
         }
 
-        LocalDate appointmentDate = appointment.getAppointmentTime().toLocalDate();
-        LocalTime appointmentTime = appointment.getAppointmentTime().toLocalTime();
+        LocalDate appointmentDate = appointment.getAppointmentDateOnly();
+        LocalTime appointmentTime = appointment.getAppointmentTime();
         String formattedTime = appointmentTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         List<String> availableSlots = doctorService.getDoctorAvailability(doctorId, appointmentDate);
@@ -149,7 +149,7 @@ public class MainService {
      * false - пацієнт вже існує
      */
     public boolean validatePatient(Patient patient) {
-        Patient existingPatient = patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone());
+        Patient existingPatient = patientRepository.findByEmailOrPhoneNumber(patient.getEmail(), patient.getPhoneNumber());
         return existingPatient == null;
     }
 

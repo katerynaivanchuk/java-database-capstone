@@ -22,5 +22,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
      * @param phone номер телефону пацієнта
      * @return об'єкт Patient або null, якщо збігів не знайдено
      */
-    Patient findByEmailOrPhone(String email, String phone);
+    Patient findByEmailOrPhoneNumber(String email, String phone);
 }

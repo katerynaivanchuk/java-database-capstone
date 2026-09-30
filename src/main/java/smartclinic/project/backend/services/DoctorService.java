@@ -44,10 +44,10 @@ public class DoctorService {
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
         List<Appointment> bookedAppointments = appointmentRepository
-                .findByDoctorIdAndAppointmentTimeBetween(doctorId, startOfDay, endOfDay);
+                .findByDoctor_IdAndAppointmentDateBetween(doctorId, startOfDay, endOfDay);
 
         List<String> bookedSlots = bookedAppointments.stream()
-                .map(a -> a.getAppointmentTime().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")))
+                .map(a -> a.getAppointmentTime().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .collect(Collectors.toList());
 
         List<String> availableSlots = new ArrayList<>(ALL_SLOTS);
@@ -101,7 +101,7 @@ public class DoctorService {
             if (!doctorRepository.existsById(id)) {
                 return -1; // Лікаря не знайдено
             }
-            appointmentRepository.deleteAllByDoctorId(id);
+            appointmentRepository.deleteAllByDoctor_Id(id);
             doctorRepository.deleteById(id);
             return 1; // Успішно видалено
         } catch (Exception e) {
@@ -211,13 +211,15 @@ public class DoctorService {
 
         return doctors.stream().filter(doctor -> {
             if (doctor.getAvailableTimes() != null) {
-                return doctor.getAvailableTimes().stream().anyMatch(time -> {
+                return doctor.getAvailableTimes().stream().anyMatch(availability -> {
                     try {
-                        int hour = Integer.parseInt(time.split(":")[0]);
+                        int startHour = availability.getStartTime().getHour();
+                        int endHour = availability.getEndTime().getHour();
+
                         if ("AM".equalsIgnoreCase(amOrPm)) {
-                            return hour < 12;
+                            return startHour < 12;
                         } else if ("PM".equalsIgnoreCase(amOrPm)) {
-                            return hour >= 12;
+                            return endHour >= 12;
                         }
                     } catch (Exception e) {
                         return false;

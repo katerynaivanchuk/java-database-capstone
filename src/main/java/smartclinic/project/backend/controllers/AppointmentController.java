@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class AppointmentController {
     private final MainService service;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, Service service) {
+    public AppointmentController(AppointmentService appointmentService, MainService service) {
         this.appointmentService = appointmentService;
         this.service = service;
     }
@@ -40,8 +41,10 @@ public class AppointmentController {
         }
 
         try {
-            // Виклик методу отримання прийомів з appointmentService
-            return appointmentService.getAppointment(date, patientName);
+            LocalDate parsedDate = LocalDate.parse(date);
+            // Обгортаємо результат сервісу у ResponseEntity.ok()
+            Map<String, Object> result = appointmentService.getAppointment(patientName, parsedDate, token);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Error retrieving appointments: " + e.getMessage());
@@ -76,9 +79,11 @@ public class AppointmentController {
         }
 
         try {
-            // Збереження / бронювання прийому
-            ResponseEntity<Map<String, String>> bookingResult = appointmentService.bookAppointment(appointment);
-            return bookingResult;
+            // Оскільки bookAppointment повертає int (результат), формуємо відповідь самостійно
+            int bookingResult = appointmentService.bookAppointment(appointment);
+            response.put("message", "Appointment booked successfully");
+            response.put("status", String.valueOf(bookingResult));
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("message", "Error booking appointment: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -93,14 +98,12 @@ public class AppointmentController {
             @PathVariable String token,
             @RequestBody Appointment appointment
     ) {
-        // Валідація токена для ролі "patient"
         ResponseEntity<Map<String, String>> tokenValidation = service.validateToken(token, "patient");
         if (!tokenValidation.getStatusCode().is2xxSuccessful()) {
             return tokenValidation;
         }
 
         try {
-            // Оновлення прийому через appointmentService
             return appointmentService.updateAppointment(appointment);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -117,15 +120,13 @@ public class AppointmentController {
             @PathVariable Long id,
             @PathVariable String token
     ) {
-        // Валідація токена для ролі "patient"
         ResponseEntity<Map<String, String>> tokenValidation = service.validateToken(token, "patient");
         if (!tokenValidation.getStatusCode().is2xxSuccessful()) {
             return tokenValidation;
         }
 
         try {
-            // Скасування прийому через appointmentService
-            return appointmentService.cancelAppointment(id);
+            return appointmentService.cancelAppointment(id, token);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Error canceling appointment: " + e.getMessage());

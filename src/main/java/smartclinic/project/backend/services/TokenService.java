@@ -126,4 +126,39 @@ public class TokenService {
             return false;
         }
     }
+
+    /**
+     * Витягує ID користувача з claims JWT токена.
+     */
+    public Long getUserIdFromToken(String token) {
+        try {
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // Отримуємо збережений claim "id"
+            Integer idInt = claims.get("id", Integer.valueOf(0).getClass());
+            if (idInt != null) {
+                return idInt.longValue();
+            }
+            
+            // Якщо claim "id" немає, спробуємо знайти за subject (email) залежно від ролі
+            String email = claims.getSubject();
+            if (email != null) {
+                var doctor = doctorRepository.findByEmail(email);
+                if (doctor != null) return doctor.getId();
+                var patient = patientRepository.findByEmail(email);
+                if (patient != null) return patient.getId();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
 }

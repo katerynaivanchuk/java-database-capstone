@@ -37,7 +37,7 @@ public class PrescriptionService {
     public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Prescription prescription = prescriptionRepository.findByAppointmentId(appointmentId);
+            Prescription prescription = prescriptionRepository.findByAppointmentId(appointmentId).stream().findFirst().orElse(null);
             response.put("prescription", prescription);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

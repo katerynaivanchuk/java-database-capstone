@@ -15,7 +15,7 @@ public class DashboardController {
     private final MainService service;
 
     @Autowired
-    public DashboardController(Service service) {
+    public DashboardController(MainService service) {
         this.service = service;
     }
 

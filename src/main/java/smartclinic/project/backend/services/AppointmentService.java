@@ -1,4 +1,4 @@
-package smartclinic.project.backend.services; // Змініть пакет відповідно до вашої структури проєкту
+package smartclinic.project.backend.services;
 
 import smartclinic.project.backend.models.Appointment;
 import smartclinic.project.backend.repositories.AppointmentRepository;
@@ -97,7 +97,7 @@ public class AppointmentService {
         // Валідація токена та перевірка, що скасування виконує саме той пацієнт, який забронював прийом
         if (token != null && tokenService != null) {
             Long userIdFromToken = tokenService.getUserIdFromToken(token);
-            if (userIdFromToken != null && !userIdFromToken.equals(appointment.getPatientId())) {
+            if (userIdFromToken != null && !userIdFromToken.equals(appointment.getPatient().getId())) {
                 response.put("message", "Unauthorized to cancel this appointment");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
@@ -131,11 +131,11 @@ public class AppointmentService {
         List<Appointment> appointments;
 
         if (pname != null && !pname.trim().isEmpty()) {
-            appointments = appointmentRepository.findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
+            appointments = appointmentRepository.findByDoctor_IdAndPatient_NameContainingIgnoreCaseAndAppointmentDateBetween(
                     doctorId, pname.trim(), startOfDay, endOfDay
             );
         } else {
-            appointments = appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(
+            appointments = appointmentRepository.findByDoctor_IdAndAppointmentDateBetween(
                     doctorId, startOfDay, endOfDay
             );
         }
