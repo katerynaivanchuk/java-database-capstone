@@ -1,74 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoctorDashboard</title>
+    <title>Doctor Dashboard</title>
+    <link rel="icon" href="https://fav.farm/🏥">
 
-    <!-- Favicon link -->
-    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+    <link rel="stylesheet" href="/assets/css/index.css">
+    <link rel="stylesheet" href="/assets/css/doctorDashboard.css">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/doctorDashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-
-    <!-- Utility JavaScript Files -->
-    <script th:src="@{/js/render.js}" defer></script>
-    <script th:src="@{/js/util.js}" defer></script>
-
-    <!-- Components JavaScript Files -->
-    <script th:src="@{/js/components/header.js}" defer></script>
-    <script th:src="@{/js/components/footer.js}" defer></script>
-    <script th:src="@{/js/components/patientRows.js}" defer></script>
-
-    <!-- Services and Main Logic JavaScript Files -->
-    <script type="module" th:src="@{/js/services/patientServices.js}" defer></script>
-    <script type="module" th:src="@{/js/services/doctorDashboard.js}" defer></script>
+    <script src="/js/components/header.js" defer></script>
+    <script src="/js/components/footer.js" defer></script>
+    <script type="module" src="/js/doctorDashboard.js"></script>
 </head>
 <body>
+    <div class="wrapper">
+        <div id="header"></div>
 
-    <div class="container">
-        <div class="wrapper">
+        <main class="main-content">
+            <input type="text" id="searchBar" placeholder="Search patients..." />
 
-            <!-- Dynamic Header placeholder -->
-            <div id="header"></div>
+            <div class="filter-section">
+                <button id="todayAppointmentsBtn">Today's Appointments</button>
+                <input type="date" id="appointmentDateFilter" />
+            </div>
 
-            <!-- Main Content Area -->
-            <main class="main-content">
+            <table id="patientTable">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Prescription</th>
+                    </tr>
+                </thead>
+                <tbody id="patientTableBody"></tbody>
+            </table>
+        </main>
 
-                <!-- Search Bar -->
-                <input type="text" id="searchBar" placeholder="Search patients..." />
-
-                <!-- Filter Section -->
-                <div class="filter-section">
-                    <button id="todayAppointmentsBtn" class="button">Today's Appointments</button>
-                    <input type="date" id="appointmentDateFilter" />
-                </div>
-
-                <!-- Patient Records Table -->
-                <table id="patientTable">
-                    <thead>
-                        <tr>
-                            <th>Patient ID</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Prescription</th>
-                        </tr>
-                    </thead>
-                    <tbody id="patientTableBody">
-                        <!-- Table body is populated dynamically via patientRows.js -->
-                    </tbody>
-                </table>
-
-            </main>
-
-            <!-- Dynamic Footer placeholder -->
-            <div id="footer"></div>
-
-        </div>
+        <div id="footer"></div>
     </div>
-
 </body>
 </html>

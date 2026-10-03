@@ -5,68 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Clinic System</title>
 
-    <!-- Favicon link -->
-    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+    <link rel="icon" href="https://fav.farm/🏥">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}" />
+    <!-- Стилі -->
+    <link rel="stylesheet" th:href="@{/assets/css/index.css}">
+    <!-- Розкоментуй, якщо файл static/assets/css/adminDashboard.css існує -->
+    <!-- <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}"> -->
 
-    <!-- Utility & Component JavaScript Files -->
-    <script th:src="@{/js/render.js}" defer></script>
-    <script th:src="@{/js/util.js}" defer></script>
+    <!-- Компоненти -->
     <script th:src="@{/js/components/header.js}" defer></script>
     <script th:src="@{/js/components/footer.js}" defer></script>
 
-    <!-- Services and Main Logic -->
-    <script type="module" th:src="@{/js/services/adminDashboard.js}" defer></script>
+    <!-- Основна логіка дашборду -->
+    <script type="module" th:src="@{/js/adminDashboard.js}"></script>
 </head>
 <body>
+    <div class="wrapper">
+        <div id="header"></div>
 
-    <div class="container">
-        <div class="wrapper">
+        <main class="main-content">
+            <h2>Admin Dashboard</h2>
 
-            <!-- Dynamic Header placeholder -->
-            <div id="header"></div>
+            <input type="text" id="searchBar" class="searchBar" placeholder="Search doctors by name" />
 
-            <!-- Main Content Area -->
-            <main class="main-content">
-                <h2>Admin Dashboard</h2>
+            <div class="filter-wrapper">
+                <select class="filter-select" id="filterTime">
+                    <option value="">All Times</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
 
-                <!-- Control Panel / Actions -->
-                <div class="admin-actions">
-                    <button id="addDocBtn" class="dashboard-btn">Add Doctor</button>
-                </div>
+                <select class="filter-select" id="filterSpecialty">
+                    <option value="">All Specialties</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
 
-                <!-- Doctors / Management Table -->
-                <table id="adminTable" class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email / Specialty</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminTableBody">
-                        <!-- Динамічно заповнюється скриптами -->
-                    </tbody>
-                </table>
-            </main>
+            <div id="content"></div>
 
-            <!-- Dynamic Footer placeholder -->
-            <div id="footer"></div>
+            <table id="adminTable" class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email / Specialty</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    <!-- Заповнюється скриптом -->
+                </tbody>
+            </table>
+        </main>
 
-        </div>
+        <div id="footer"></div>
     </div>
 
-    <!-- Reusable Modal Markup -->
-    <div id="modal" class="modal hidden" style="display: none !important;">
+    <!-- Модальне вікно (керується класом hidden) -->
+    <div id="modal" class="modal hidden">
         <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
+            <button id="closeModal" class="close-btn">&times;</button>
             <div id="modal-body"></div>
         </div>
     </div>
-
 </body>
 </html>

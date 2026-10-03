@@ -111,7 +111,7 @@ public class AppointmentService {
     /**
      * Отримує список записів для конкретного лікаря на вказану дату з можливістю фільтрації за ім'ям пацієнта.
      *
-     * @param pname ім'я пацієнта для фільтрації (може бути порожнім)
+     * @param pname ім'я пацієнта для фільтрації (може бути порожнім або рядком "null")
      * @param date  дата прийому
      * @param token токен авторизації лікаря
      * @return Map зі списком записів
@@ -120,6 +120,10 @@ public class AppointmentService {
         Map<String, Object> response = new HashMap<>();
 
         Long doctorId = tokenService != null ? tokenService.getUserIdFromToken(token) : null;
+
+        // TODO: тимчасовий лог для діагностики, потім видалити
+        System.out.println("getAppointment: doctorId=" + doctorId + ", pname=" + pname + ", date=" + date);
+
         if (doctorId == null) {
             response.put("appointments", List.of());
             return response;
@@ -128,9 +132,14 @@ public class AppointmentService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
+        // Фронтенд передає "null" рядком, коли пошук порожній, тому це теж вважаємо відсутністю фільтра
+        boolean hasNameFilter = pname != null
+                && !pname.trim().isEmpty()
+                && !pname.trim().equalsIgnoreCase("null");
+
         List<Appointment> appointments;
 
-        if (pname != null && !pname.trim().isEmpty()) {
+        if (hasNameFilter) {
             appointments = appointmentRepository.findByDoctor_IdAndPatient_NameContainingIgnoreCaseAndAppointmentDateBetween(
                     doctorId, pname.trim(), startOfDay, endOfDay
             );
@@ -139,6 +148,8 @@ public class AppointmentService {
                     doctorId, startOfDay, endOfDay
             );
         }
+
+        System.out.println("getAppointment: found " + appointments.size() + " appointments");
 
         response.put("appointments", appointments);
         return response;

@@ -1,23 +1,22 @@
 import { getAllAppointments } from "./services/appointmentRecordService.js";
 import { createPatientRow } from "./components/patientRows.js";
 
-// Глобальні змінні та DOM-елементи
 let patientTableBody;
 let selectedDate;
-let token;
 let patientName = "null";
 
+function todayLocal() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Ініціалізація глобальних змінних
   patientTableBody = document.getElementById("patientTableBody");
-  token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  selectedDate = todayLocal();
 
-  // Встановлюємо початкову дату — сьогоднішній день (у форматі YYYY-MM-DD)
-  const today = new Date();
-  selectedDate = today.toISOString().split("T")[0];
-
-  // Встановлюємо початкове значення для елемента datePicker, якщо він присутній
-  const datePicker = document.getElementById("datePicker");
+  const datePicker = document.getElementById("appointmentDateFilter");
   if (datePicker) {
     datePicker.value = selectedDate;
     datePicker.addEventListener("change", (e) => {
@@ -26,20 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Налаштування кнопки "Today's Appointments"
-  const todayButton = document.getElementById("todayButton");
+  const todayButton = document.getElementById("todayAppointmentsBtn");
   if (todayButton) {
     todayButton.addEventListener("click", () => {
-      const freshToday = new Date().toISOString().split("T")[0];
-      selectedDate = freshToday;
-      if (datePicker) {
-        datePicker.value = freshToday;
-      }
+      selectedDate = todayLocal();
+      if (datePicker) datePicker.value = selectedDate;
       loadAppointments();
     });
   }
 
-  // Налаштування поля пошуку за ім'ям пацієнта
   const searchBar = document.getElementById("searchBar");
   if (searchBar) {
     searchBar.addEventListener("input", (e) => {
@@ -49,54 +43,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Первинне завантаження записів при відкритті сторінки
   loadAppointments();
 });
 
-/**
- * Завантажує та відображає записи на прийом для лікаря з урахуванням дати та пошукового запиту
- */
 async function loadAppointments() {
-  if (!patientTableBody) {
-    patientTableBody = document.getElementById("patientTableBody");
-  }
-
   if (!patientTableBody) return;
-
-  // Очищаємо таблицю перед завантаженням нових даних
   patientTableBody.innerHTML = "";
 
+  const token = localStorage.getItem("token");
+
   try {
-    // Отримуємо записи з бекенду через сервіс
     const appointments = await getAllAppointments(selectedDate, patientName, token);
 
-    // Перевірка на відсутність записів або порожній масив
     if (!appointments || appointments.length === 0) {
       patientTableBody.innerHTML = `
-        <tr>
-          <td colspan="10" style="text-align: center; padding: 1.5rem;">
-            No Appointments found for today
-          </td>
-        </tr>
-      `;
+        <tr><td colspan="5" style="text-align:center; padding:1.5rem;">
+          No appointments found
+        </td></tr>`;
       return;
     }
 
-    // Рендеримо кожний рядок запису
     appointments.forEach((appointment) => {
-      const row = createPatientRow(appointment);
-      patientTableBody.appendChild(row);
+      patientTableBody.appendChild(createPatientRow(appointment));
     });
   } catch (error) {
-    console.error("Error loading appointments for doctor:", error);
-
-    // Відображення резервного повідомлення про помилку в таблиці
+    console.error("Error loading appointments:", error);
     patientTableBody.innerHTML = `
-      <tr>
-        <td colspan="10" style="text-align: center; color: red; padding: 1.5rem;">
-          Failed to load appointments. Please try again later.
-        </td>
-      </tr>
-    `;
+      <tr><td colspan="5" style="text-align:center; color:red; padding:1.5rem;">
+        Failed to load appointments. Please try again later.
+      </td></tr>`;
   }
 }

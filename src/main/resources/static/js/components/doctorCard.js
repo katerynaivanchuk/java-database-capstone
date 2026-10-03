@@ -1,22 +1,13 @@
-// Імпортуємо необхідні допоміжні сервісні функції та оверлей
-import { deleteDoctor } from "./services/doctorServices.js";
-import { getPatientData } from "./services/patientServices.js";
+import { deleteDoctor } from "../services/doctorService.js";
+import { getPatientData } from "../services/patientServices.js";
 import { showBookingOverlay } from "./bookingOverlay.js";
 
-/**
- * Створює картку лікаря
- * @param {Object} doctor - Об'єкт з даними лікаря (id, name, specialization, email, availability)
- * @returns {HTMLElement} - Готовий DOM-елемент картки (.doctor-card)
- */
 export function createDoctorCard(doctor) {
-  // 1. Створюємо головний контейнер картки
   const card = document.createElement("div");
   card.classList.add("doctor-card");
 
-  // 2. Отримуємо роль поточного користувача
   const role = localStorage.getItem("userRole");
 
-  // 3. Створюємо секцію з інформацією про лікаря
   const infoDiv = document.createElement("div");
   infoDiv.classList.add("doctor-info");
 
@@ -24,44 +15,37 @@ export function createDoctorCard(doctor) {
   name.textContent = doctor.name || "Dr. Unknown";
 
   const specialization = document.createElement("p");
-  specialization.textContent = `Specialty: ${doctor.specialization || "N/A"}`;
+  specialization.textContent = `Specialty: ${doctor.specialization || doctor.specialty || "N/A"}`;
 
   const email = document.createElement("p");
-  email.textContent = `Email: ${doctor.email || "N/A"}`;
+  email.textContent = `Email: ${doctor.email || "N/A"} | Room: ${doctor.roomNumber || "N/A"}`;
 
   const availability = document.createElement("p");
-  // Якщо availability є масивом, об'єднуємо через кому, інакше виводимо як є
-  const availabilityText = Array.isArray(doctor.availability)
-    ? doctor.availability.join(", ")
-    : doctor.availability || "Not specified";
-  availability.textContent = `Availability: ${availabilityText}`;
+  const availabilityText = Array.isArray(doctor.availableTimes) && doctor.availableTimes.length
+  ? doctor.availableTimes
+      .map((a) => `${String(a.dayOfWeek).slice(0, 3)} ${String(a.startTime).slice(0, 5)}-${String(a.endTime).slice(0, 5)}`)
+      .join(", ")
+  : "Not specified";
 
-  infoDiv.appendChild(name);
-  infoDiv.appendChild(specialization);
-  infoDiv.appendChild(email);
-  infoDiv.appendChild(availability);
+  infoDiv.append(name, specialization, email, availability);
 
-  // 4. Створюємо контейнер для кнопок дій
   const actionsDiv = document.createElement("div");
   actionsDiv.classList.add("card-actions");
 
-  // 5. Умовне додавання кнопок залежно від ролі
   if (role === "admin") {
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "Delete";
     removeBtn.classList.add("delete-btn");
 
     removeBtn.addEventListener("click", async () => {
-      const confirmed = confirm(`Are you sure you want to delete ${doctor.name}?`);
-      if (!confirmed) return;
+      if (!confirm(`Are you sure you want to delete ${doctor.name}?`)) return;
 
       const token = localStorage.getItem("token");
-      try {
-        await deleteDoctor(doctor.id, token);
-        // При успішному видаленні з бекенду видаляємо картку з DOM
+      const result = await deleteDoctor(doctor.id, token);
+      if (result.success) {
         card.remove();
-      } catch (error) {
-        alert("Failed to delete doctor: " + error.message);
+      } else {
+        alert("Failed to delete doctor: " + result.message);
       }
     });
 
@@ -70,11 +54,9 @@ export function createDoctorCard(doctor) {
     const bookNow = document.createElement("button");
     bookNow.textContent = "Book Now";
     bookNow.classList.add("book-btn");
-
     bookNow.addEventListener("click", () => {
       alert("Patient needs to login first.");
     });
-
     actionsDiv.appendChild(bookNow);
   } else if (role === "loggedPatient") {
     const bookNow = document.createElement("button");
@@ -83,20 +65,17 @@ export function createDoctorCard(doctor) {
 
     bookNow.addEventListener("click", async (e) => {
       const token = localStorage.getItem("token");
-      try {
-        const patientData = await getPatientData(token);
-        showBookingOverlay(e, doctor, patientData);
-      } catch (error) {
-        alert("Could not load patient data for booking: " + error.message);
+      const patientData = await getPatientData(token);
+      if (!patientData) {
+        alert("Could not load patient data for booking.");
+        return;
       }
+      showBookingOverlay(e, doctor, patientData);
     });
 
     actionsDiv.appendChild(bookNow);
   }
 
-  // 6. Фінальна збірка картки
-  card.appendChild(infoDiv);
-  card.appendChild(actionsDiv);
-
+  card.append(infoDiv, actionsDiv);
   return card;
 }

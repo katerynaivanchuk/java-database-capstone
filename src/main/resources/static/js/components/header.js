@@ -1,8 +1,8 @@
 function renderHeader() {
   const headerDiv = document.getElementById("header");
-  if (!headerDiv) return; 
+  if (!headerDiv) return;
 
-  if (window.location.pathname.endsWith("/")) {
+  if (window.location.pathname === "/") {
     localStorage.removeItem("userRole");
     localStorage.removeItem("token");
   }
@@ -17,7 +17,6 @@ function renderHeader() {
     return;
   }
 
-  
   let headerContent = "";
 
   if (role === "admin") {
@@ -44,14 +43,13 @@ function renderHeader() {
   }
 
   headerDiv.innerHTML = headerContent;
-
   attachHeaderButtonListeners();
 }
 
 function attachHeaderButtonListeners() {
   const addDocBtn = document.getElementById("addDocBtn");
   if (addDocBtn) {
-    addDocBtn.addEventListener("click", () => openModal("addDoctor"));
+    addDocBtn.addEventListener("click", () => window.openModal && window.openModal("addDoctor"));
   }
 
   const homeBtn = document.getElementById("homeBtn");
@@ -70,16 +68,12 @@ function attachHeaderButtonListeners() {
 
   const loginBtn = document.getElementById("loginBtn");
   if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
-      window.location.href = "/login.html";
-    });
+    loginBtn.addEventListener("click", () => window.openModal("patientLogin"));
   }
 
   const signupBtn = document.getElementById("signupBtn");
   if (signupBtn) {
-    signupBtn.addEventListener("click", () => {
-      window.location.href = "/signup.html";
-    });
+    signupBtn.addEventListener("click", () => window.openModal("patientSignup"));
   }
 
   const logoutBtn = document.getElementById("logoutBtn");
@@ -99,19 +93,16 @@ function attachHeaderButtonListeners() {
   }
 }
 
-// 5. Функція стандартного виходу (для admin та doctor)
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("userRole");
   window.location.href = "/";
 }
 
-// 6. Функція виходу для авторизованого пацієнта (повертає стан до звичайного "patient")
 function logoutPatient() {
   localStorage.removeItem("token");
   localStorage.setItem("userRole", "patient");
-  window.location.href = "/";
+  window.location.href = "/pages/patientDashboard.html";
 }
 
-// Автоматичний виклику рендерингу при завантаженні сторінки
 document.addEventListener("DOMContentLoaded", renderHeader);
